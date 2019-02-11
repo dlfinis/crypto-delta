@@ -1,0 +1,47 @@
+<div class="mat-elevation-z8">
+  <table mat-table class="full-width-table" [dataSource]="dataSource" matSort aria-label="Elements">
+    <!-- Id Column -->
+    <ng-container matColumnDef="rank">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Rank</th>
+      <td mat-cell *matCellDef="let row">{{row.sortOrder}}</td>
+    </ng-container>
+
+    <!-- Logo Column -->
+    <ng-container matColumnDef="logo">
+        <th mat-header-cell *matHeaderCellDef >Symbol</th>
+        <td mat-cell *matCellDef="let row" class="coin-logo"><img [src]="row.imageUrl"/></td>
+      </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Symbol</th>
+      <td mat-cell *matCellDef="let row">
+       <a [routerLink]="[ '/list',row.name]">{{row.name}}</a>
+        <!-- <app-coin-data [coin]="row.name"></app-coin-data> -->
+      </td>
+
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="coinName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let row">{{row.coinName}}</td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="algorithm">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Algorithm</th>
+      <td mat-cell *matCellDef="let row">{{row.algorithm}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator #paginator
+      [length]="dataSource.data.length"
+      [pageIndex]="0"
+      [pageSize]="50"
+      [pageSizeOptions]="[25, 50, 100, 250]">
+  </mat-paginator>
+</div>

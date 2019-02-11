@@ -1,0 +1,46 @@
+{
+  "index": "/index.html",
+  "dataGroups": [
+    {
+      "name": "CryptoCompareApi",
+      "urls": [
+        "https://min-api.cryptocompare.com/data/**",
+        "https://www.cryptocompare.com/media/**"
+      ],
+      "version": 1,
+      "cacheConfig": {
+        "maxSize": "10",
+        "maxAge": "30m",
+        "strategy": "performance"
+      }
+    }
+  ],
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/manifest.json",
+          "/*.css",
+          "/*.js"
+        ],
+        "urls": [
+          "https://fonts.googleapis.com/css?family=Roboto:300,400,500",
+          "https://fonts.googleapis.com/icon?family=Material+Icons"
+        ]
+      }
+    }, {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**"
+        ]
+      }
+    }
+  ]
+}
