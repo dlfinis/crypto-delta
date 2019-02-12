@@ -68,4 +68,27 @@ export class CryptoCompareService {
     }
     return output;
   }
+
+  getCoinsByExchange(exchange: string) {
+    return cc.exchangeList().then( exc => {
+      const data = Object.keys(exc)
+      .filter(key => exchange === key)
+      .reduce((obj, key) => {
+        const rObj = { };
+        rObj[key] = exc[key];
+        return rObj;
+      }, {});
+      // console.log(data);
+      return data;
+    });
+
+  }
+
+  getCoinsMarketPair(coinName: string, pairs) {
+    return Object.keys(pairs).map(pcoin => {
+      console.log(pcoin);
+      // console.log(pcoin.includes(coinName));
+      return pcoin;
+    });
+  }
 }
