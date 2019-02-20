@@ -24,10 +24,51 @@ export class CryptoCompareService {
 
 
   getCoinList() {
-   cc.coinList().then(coin => {
-     console.log('Get coins', coin);
+   return cc.coinList().then(response => {
+     return response;
    });
   }
+
+  scoinlist(): Observable<CryptoCompareCoin[]> {
+
+    return cc.coinList().then(res => {
+      res.pipe(
+        map(x => this.convertKeysToKebabCase(x)),
+        filter(
+          (x: CryptoCompareResponse) => x.response.toLowerCase() === 'success'),
+        map(x =>
+          Object.values(x.data)
+            .filter(y => y.sortOrder <= 100)
+            // sort list
+            .sort((a, b) => a.sortOrder - b.sortOrder)
+            .map(y => {
+              y.imageUrl = x.baseImageUrl + y.imageUrl;
+              return y;
+            })
+            )
+          );
+      });
+    }
+
+
+    // return this.httpClient
+    //   .get('https://min-api.cryptocompare.com/data/all/coinlist')
+    //   .pipe(
+    //     map(x => this.convertKeysToKebabCase(x)),
+    //     filter(
+    //       (x: CryptoCompareResponse) => x.response.toLowerCase() === 'success'),
+    //     map(x =>
+    //       Object.values(x.data)
+    //         .filter(y => y.sortOrder <= 100)
+    //         // sort list
+    //         .sort((a, b) => a.sortOrder - b.sortOrder)
+    //         .map(y => {
+    //           y.imageUrl = x.baseImageUrl + y.imageUrl;
+    //           return y;
+    //         })
+    //     )
+    //   );
+  // }
 
   coinlist(): Observable<CryptoCompareCoin[]> {
     return this.httpClient
@@ -35,8 +76,7 @@ export class CryptoCompareService {
       .pipe(
         map(x => this.convertKeysToKebabCase(x)),
         filter(
-          (x: CryptoCompareResponse) => x.response.toLowerCase() === 'success'
-        ),
+          (x: CryptoCompareResponse) => x.response.toLowerCase() === 'success'),
         map(x =>
           Object.values(x.data)
             .filter(y => y.sortOrder <= 100)
@@ -79,7 +119,7 @@ export class CryptoCompareService {
         return rObj;
       }, {});
       // console.log(data);
-      return data;
+      return data[exchange];
     });
 
   }

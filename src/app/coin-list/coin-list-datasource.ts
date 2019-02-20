@@ -28,7 +28,22 @@ export class CoinListDataSource extends DataSource<CryptoCompareCoin> {
   connect(): Observable<CryptoCompareCoin[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
-    const dataObservable = this.coinService.coinlist()
+    // const dataObservable = this.coinService.coinlist()
+    //   .pipe(
+    //     tap(data => {
+    //       // Set the data length
+    //       this.data = data;
+    //       // Set the paginator's length
+    //       this.paginator.length = data.length;
+    //      })
+    //   );
+
+    // const dataObservable = this.coinService.getCoinList().then(response => {
+    //   this.data = response.Data;
+    //   this.paginator.length = this.data.length;
+    // });
+
+      const dataObservable = this.coinService.scoinlist()
       .pipe(
         tap(data => {
           // Set the data length
@@ -37,6 +52,7 @@ export class CoinListDataSource extends DataSource<CryptoCompareCoin> {
           this.paginator.length = data.length;
          })
       );
+
     const dataMutations = [
       dataObservable,
       this.paginator.page,

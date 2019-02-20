@@ -14,13 +14,16 @@ export class CoinListComponent implements OnInit {
   dataSource: CoinListDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['rank', 'logo', 'name', 'coinName', 'algorithm'];
+  displayedColumns = ['rank', 'logo', 'name', 'coinName'];
 
   constructor(
     private coinService: CryptoCompareService,
   ) {}
   ngOnInit() {
-    this.coinService.getCoinList();
+    // console.log(this.coinService.getCoinList());
+    this.coinService.getCoinList().then( response => {
+       console.log(response);
+    });
     this.dataSource = new CoinListDataSource(this.coinService, this.paginator, this.sort);
   }
 }
