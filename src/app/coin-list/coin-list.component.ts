@@ -21,9 +21,14 @@ export class CoinListComponent implements OnInit {
   ) {}
   ngOnInit() {
     // console.log(this.coinService.getCoinList());
-    this.coinService.getCoinList().then( response => {
-       console.log(response);
-    });
+    // this.coinService.getCoinList().then( response => {
+    //    console.log(response);
+    // });
+
+  //   this.coinService.scoinList().then( response => {
+  //     console.log(response);
+  //  });
+
     this.dataSource = new CoinListDataSource(this.coinService, this.paginator, this.sort);
   }
 }

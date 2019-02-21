@@ -43,6 +43,8 @@ export class CoinListDataSource extends DataSource<CryptoCompareCoin> {
     //   this.paginator.length = this.data.length;
     // });
 
+    // this.coinService.scoinlist().subscribe(x => console.log(x));
+
       const dataObservable = this.coinService.scoinlist()
       .pipe(
         tap(data => {

@@ -12,12 +12,12 @@ import { CryptoCompareService } from '../services/crypto-compare/crypto-compare.
 export class CoinDataComponent implements OnInit {
   // @Input() coin: string;
 
-  coin = new CoinVO();
+  coin = new CoinVO;
   id: string;
   sub;
   bnb_coins;
 
-  exchange: string = 'Binance';
+  exchange = 'Binance';
   dataPair: any;
 
   constructor(private _route: ActivatedRoute, private ccService: CryptoCompareService) { }

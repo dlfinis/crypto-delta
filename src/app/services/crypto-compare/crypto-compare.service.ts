@@ -5,8 +5,11 @@ import { HttpClient } from '@angular/common/http';
 import { CryptoCompareCoin } from './crypto-compare-coin';
 import { CryptoCompareResponse } from './crypto-compare-response';
 import { map, filter } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import * as cc from 'cryptocompare';
+import { CoinVO } from 'src/app/vo/CoinVO';
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -29,45 +32,50 @@ export class CryptoCompareService {
    });
   }
 
-  scoinlist(): Observable<CryptoCompareCoin[]> {
+  scoinlist(): Observable<any> {
 
-    return cc.coinList().then(res => {
-      res.pipe(
-        map(x => this.convertKeysToKebabCase(x)),
-        filter(
-          (x: CryptoCompareResponse) => x.response.toLowerCase() === 'success'),
-        map(x =>
-          Object.values(x.data)
-            .filter(y => y.sortOrder <= 100)
-            // sort list
-            .sort((a, b) => a.sortOrder - b.sortOrder)
-            .map(y => {
-              y.imageUrl = x.baseImageUrl + y.imageUrl;
-              return y;
-            })
-            )
-          );
-      });
-    }
+    const data = from(cc.coinList());
 
+    return data.pipe(map(x => this.convertKeysToKebabCase(x)),
+      filter(
+            (x: CryptoCompareResponse) => x.response.toLowerCase() === 'success'),
+          map(x =>
+            Object.values(x.data)
+              .filter(y => y.sortOrder <= 4000)
+              .sort((a, b) => a.sortOrder - b.sortOrder)
+              .map(y => {
+                y.imageUrl = x.baseImageUrl + y.imageUrl;
+                return y;
+              })
+          )
+        );
+      }
 
-    // return this.httpClient
-    //   .get('https://min-api.cryptocompare.com/data/all/coinlist')
-    //   .pipe(
-    //     map(x => this.convertKeysToKebabCase(x)),
-    //     filter(
-    //       (x: CryptoCompareResponse) => x.response.toLowerCase() === 'success'),
-    //     map(x =>
-    //       Object.values(x.data)
-    //         .filter(y => y.sortOrder <= 100)
-    //         // sort list
-    //         .sort((a, b) => a.sortOrder - b.sortOrder)
-    //         .map(y => {
-    //           y.imageUrl = x.baseImageUrl + y.imageUrl;
-    //           return y;
-    //         })
-    //     )
-    //   );
+      // console.log(x);
+      // console.log(x.response);
+      // console.log(x.response.toString().toLowerCase());
+      // return x;
+      // if (x.response.toLowerCase() === 'success') {
+      //   // console.log(Object.keys(x.data).length);
+      //   // return x.data;
+      // }
+    // }));
+
+  //   return data.pipe(map(x => this.convertKeysToKebabCase(x)),
+  //   filter(
+  //     (x: CryptoCompareResponse) => x.response.toLowerCase() === 'success'),
+  //   map(x =>
+  //     Object.values(x.data)
+  //       .filter(y => y.sortOrder <= 100)
+  //       // sort list
+  //       .sort((a, b) => a.sortOrder - b.sortOrder)
+  //       .map(y => {
+  //         y.imageUrl = x.baseImageUrl + y.imageUrl;
+  //         return y;
+  //       })
+  //   )
+  // );
+
   // }
 
   coinlist(): Observable<CryptoCompareCoin[]> {
@@ -106,6 +114,7 @@ export class CryptoCompareService {
         output[i.substr(0, 1).toLowerCase() + i.substr(1)] = obj[i];
       }
     }
+    // console.log(output);
     return output;
   }
 
