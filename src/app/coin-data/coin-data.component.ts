@@ -17,10 +17,11 @@ export class CoinDataComponent implements OnInit {
   sub;
   bnb_coins;
 
-  exchange = 'Binance';
   dataPair: any;
+  dataChange: any;
 
-  constructor(private _route: ActivatedRoute, private ccService: CryptoCompareService) { }
+  constructor(private _route: ActivatedRoute, private ccService: CryptoCompareService) {
+   }
 
   ngOnInit() {
     this.sub = this._route.params.subscribe(params => {
@@ -33,35 +34,15 @@ export class CoinDataComponent implements OnInit {
   }
 
   onLoadCoins() {
-    this.ccService.getCoinsByExchange(this.exchange).then( response => {
-      // console.log(response);
-      this.dataPair = Array.from(Object.keys(response), k => {
-
-        return { currency: k , pair : response[k] };
-      } );
-      // console.log(Object.keys(response));
-      // console.log(this.dataPair);
-
-      // for (let key in this.dataPair) {
-      //   console.log(key);
-      // }
-      // console.log(Object.getOwnPropertyNames(this.dataPair));
-      // this.dataPair.forEach(element => {
-      //   // console.log(element);
-
-      // });
-    //  this.dataPair.map(pcoin => {
-    //     // console.log(pcoin);
-    //     // console.log(pcoin.includes(coinName));
-    //   });
-      // this.ccService.getCoinsMarketPair(this.coin.name, this.dataPair).then(pair => {
-      //   console.log(pair);
-      // });
-      const list = this.dataPair.filter( pcoin => {
-          return pcoin.pair.includes(this.coin.name);
-      });
-      console.log(list);
+    this.ccService.getCoinsByExchange().then(x => {
+      console.log(x);
     });
-    // console.log(this.dataPair);
+    this.ccService.getChangeCurrencyList(this.coin).then(response => {
+      console.log(response);
+    });
+
+    this.ccService.getPairList(this.coin).then(response => {
+      console.log(response);
+    });
   }
 }
