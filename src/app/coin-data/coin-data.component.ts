@@ -20,6 +20,8 @@ export class CoinDataComponent implements OnInit {
   dataPair: any;
   dataChange: any;
 
+  displayedColumns: string[];
+
   constructor(private _route: ActivatedRoute, private ccService: CryptoCompareService) {
    }
 
@@ -31,17 +33,27 @@ export class CoinDataComponent implements OnInit {
 
       console.log(this.coin);
       this.onLoadCoins();
+
+      this.displayedColumns = ['currency', 'pair', 'value'];
+      this.onLoadPrice('BTC');
   }
 
-  onLoadCoins() {
-    this.ccService.getCoinsByExchange().then(x => {
+  onLoadPrice(coin: string) {
+    return this.ccService.getPrice(coin).subscribe(x => {
       console.log(x);
+      return x;
     });
-    this.ccService.getChangeCurrencyList(this.coin).then(response => {
-      console.log(response);
-    });
+  }
+  onLoadCoins() {
+    // this.ccService.getCoinsByExchange().then(x => {
+    //   console.log(x);
+    // });
+    // this.ccService.getChangeCurrencyList(this.coin).then(response => {
+    //   console.log(response);
+    // });
 
     this.ccService.getPairList(this.coin).then(response => {
+      this.dataPair = response;
       console.log(response);
     });
   }

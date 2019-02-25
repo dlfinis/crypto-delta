@@ -30,6 +30,11 @@ export class CryptoCompareService {
      this.exchange = 'Binance';
   }
 
+  getPrice(coin: String): Observable<any>  {
+    console.log('getPrice');
+    const data = from(cc.price(coin, 'USD'));
+    return data.pipe( map(x => x));
+  }
 
   getChangeCurrencyList(coin: CoinVO) {
     console.log('getChangeCurrencyList');
