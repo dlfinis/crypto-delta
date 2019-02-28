@@ -21,5 +21,6 @@ export class CoinListComponent implements OnInit {
   ) {}
   ngOnInit() {
     this.dataSource = new CoinListDataSource(this.coinService, this.paginator, this.sort);
+    // console.log(this.dataSource);
   }
 }

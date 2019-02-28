@@ -23,6 +23,7 @@ export class CryptoCompareService {
   cc_apiKey = 'beeb038811986b65e5979dab7e855c5bdc7d8ce9dafa891c181ebefe88065150';
   dataList: any;
   dataExchangeList: any;
+  dataCoinsExchange: any = [];
 
   exchange: any;
   constructor(private httpClient: HttpClient) {
@@ -39,13 +40,13 @@ export class CryptoCompareService {
   getChangeCurrencyList(coin: CoinVO) {
     console.log('getChangeCurrencyList');
     console.log(this.dataExchangeList.length);
-    return this.getCoinsByExchange().then( response => {
+    return this.getCoinsByExchange(this.exchange).then( response => {
       return response[coin.name];
     });
   }
 
-  getPairList(coin: CoinVO) {
-    return this.getCoinsByExchange().then( response => {
+  getPairList(coin: CoinVO): Observable<any> {
+    return from(this.getCoinsByExchange(this.exchange)).pipe( map(response => {
       const dataPair = Array.from(Object.keys(response), k => {
         return { currency: k , pair : response[k] };
       } );
@@ -53,7 +54,7 @@ export class CryptoCompareService {
           return pcoin.pair.includes(coin.name);
       });
       return list;
-    });
+    }));
   }
 
  scoinlist(): Observable<any> {
@@ -115,7 +116,7 @@ export class CryptoCompareService {
     return output;
   }
 
-  getCoinsByExchange() {
+  getCoinsByExchange(exchange: string) {
 
     // console.log(Object.keys(this.dataExchangeList));
     // if (Object.keys(this.dataExchangeList).length > 1) {
@@ -123,16 +124,17 @@ export class CryptoCompareService {
     // }
 
     return this.dataExchangeList = cc.exchangeList().then( exc => {
-      console.log(this.exchange);
+      console.log('Get Data from:' + exchange);
       const data = Object.keys(exc)
-      .filter(key => this.exchange === key)
+      .filter(key => exchange === key)
       .reduce((obj, key) => {
         const rObj = { };
         rObj[key] = exc[key];
         return rObj;
       }, {});
-      console.log(data);
-      return data[this.exchange];
+      // console.log(data);
+      this.dataCoinsExchange = data[exchange];
+      return data[exchange];
     });
 
   }

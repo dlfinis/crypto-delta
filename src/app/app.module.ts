@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -9,13 +10,16 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule,
    MatListModule, MatGridListModule,
    MatCardModule, MatMenuModule, MatTableModule,
-   MatPaginatorModule, MatSortModule } from '@angular/material';
+   MatPaginatorModule, MatSortModule, MatInputModule } from '@angular/material';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CoinListComponent } from './coin-list/coin-list.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { CoinDataComponent } from './coin-data/coin-data.component';
+
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {TableModule} from 'primeng/table';
 
 
 @NgModule({
@@ -32,6 +36,11 @@ import { CoinDataComponent } from './coin-data/coin-data.component';
     BrowserAnimationsModule,
     HttpClientModule,
     LayoutModule,
+    FormsModule,
+    NgbModule,
+
+    TableModule,
+
     MatToolbarModule,
     MatButtonModule,
     MatSidenavModule,
@@ -43,6 +52,7 @@ import { CoinDataComponent } from './coin-data/coin-data.component';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
+    MatInputModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [],

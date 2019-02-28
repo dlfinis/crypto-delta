@@ -13,6 +13,10 @@ import { Inject } from '@angular/core';
  */
 export class CoinListDataSource extends DataSource<CryptoCompareCoin> {
   data: CryptoCompareCoin[] = [];
+  exchange: any = [];
+  name_exchange = 'Binance';
+  dataE;
+
   constructor(
     private coinService: CryptoCompareService,
     private paginator: MatPaginator,
@@ -60,6 +64,13 @@ export class CoinListDataSource extends DataSource<CryptoCompareCoin> {
       this.paginator.page,
       this.sort.sortChange
     ];
+
+    const dataExchange = this.coinService.getCoinsByExchange(this.name_exchange)
+    .pipe(
+      tap(data => {
+        this.dataE = data;
+      })
+    );
 
     return merge(...dataMutations).pipe(map(() => {
       return this.getPagedData(this.getSortedData([...this.data]));
