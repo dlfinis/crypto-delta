@@ -26,29 +26,45 @@ export class CoinDataComponent implements OnInit {
   cvalue = 0.0;
   loading: boolean;
 
+
   constructor(private _route: ActivatedRoute, private ccService: CryptoCompareService) {
    }
 
   ngOnInit() {
     this.sub = this._route.params.subscribe(params => {
       this.coin.name = params['coin'];
-
       });
 
-      console.log(this.coin);
-      // this.onLoadCoins();
+      // console.log(this.coin);
 
       this.displayedColumns = ['currency', 'pair', 'value'];
-      this.onLoadPrice('BTC');
       this.loading = true;
+
+      this.onLoadPrice(this.coin.name, 'USD').subscribe(res => {
+        this.coin.usd = res.USD;
+      });
+
+      this.onLoadPrice(this.coin.name, 'BTC').subscribe(res => {
+        this.coin.btc = res.BTC;
+      });
+      console.log(this.coin);
+
   }
 
-  onLoadPrice(coin: string) {
-    return this.ccService.getPrice(coin).subscribe(x => {
-      console.log(x);
-      return x;
+  fnGetPrice(coin: string, base: string) {
+
+    return this.ccService.getPrice(coin, base).subscribe(res => {
+      console.log(res);
+      return res[base];
     });
+    // return value;
   }
+  onLoadPrice(coin: string, base: string) {
+
+    return this.ccService.getPrice(coin, base);
+    // return value;
+  }
+
   onLoadCoins(event: LazyLoadEvent) {
     this.loading = true;
     // this.ccService.getCoinsByExchange().then(x => {
@@ -60,9 +76,27 @@ export class CoinDataComponent implements OnInit {
 
     this.ccService.getPairList(this.coin).subscribe(response => {
       this.dataPair = response;
-      // this.dataPair = response.slice(event.first, (event.first + event.rows));
-      console.log(this.dataPair);
-      this.loading = false;
+
+       this.dataPair.map(x => {
+      this.onLoadPrice(x.currency, 'USD').subscribe(res => {
+        console.log('DT', x.currency, '-', res);
+        x.usd = res.USD;
+        // console.log('DT', x);
+      });
     });
+
+      // this.dataPair = response.slice(event.first, (event.first + event.rows));
+      this.loading = false;
+      // console.log(this.dataPair);
+    });
+
+    // const tmp =  this.dataPair.map(x => {
+    //   this.onLoadPrice(x.currency).subscribe(res => {
+    //     console.log('DT', x.currency, '-', res);
+    //     x.usd = res.USD;
+    //   });
+    // });
+
+    // this.dataPair = [...tmp];
   }
 }

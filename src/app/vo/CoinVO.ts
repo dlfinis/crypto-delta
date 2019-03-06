@@ -7,6 +7,8 @@ export class CoinVO {
     public symbol?: string;
     public trading?: boolean;
     public sortOrder?: number;
+    public usd?: number;
+    public btc?: number;
 
     public fill(name: any, id: string, url: string, image, symbol: string, sortOrder: string, trading: boolean) {
       this.id = id;

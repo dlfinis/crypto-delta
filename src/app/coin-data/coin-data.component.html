@@ -4,18 +4,25 @@
     <p>
         Obteniendo - {{coin.name}}
        </p>
+       <!-- <div>{{coin | json}}</div> -->
+       <div class="col-md-10" >
 
-       <input type="text" class="form-control" id="name"
-  required
-  [(ngModel)]="data" />
+      <span> {{coin.usd | currency}} USD </span>
+      <span> {{coin.usd*value_exp | currency}} </span>
+      </div>
+       <div class="col-md-10" >
+          <span> {{coin.btc}} BTC </span>
+          <span> {{coin.btc*value_exp }} </span>
+          <!-- <span> {{(fnGetPrice('BTC','USD')*coin.btc*value_exp | async) | currency}} </span> -->
+       </div>
+
+       <input  type="number" name="quantity" min="1" class="form-control" id="value-coin"  [(ngModel)]="value_exp" />
   <!-- <input matInput type="text" placeholder="Limpiar cantidad" [(ngModel)]="cvalue"> -->
-  <button mat-button *ngIf="cvalue" matSuffix mat-icon-button aria-label="Limpiar" (click)="cvalue=''">
-    <mat-icon>close</mat-icon>
-  </button>
+
 </div>
 
 <div class="col-md-12">
-    <p-table [value]="dataPair" [lazy]="true" (onLazyLoad)="onLoadCoins($event)" [paginator]="false"
+    <p-table [value]="dataPair" [lazy]="true" (onLazyLoad)="onLoadCoins($event)" [paginator]="true"
     [rows]="10" [totalRecords]="totalRecords" [loading]="loading">
         <ng-template pTemplate="header">
             <tr>
@@ -25,7 +32,19 @@
         </ng-template>
         <ng-template pTemplate="body" let-elm>
             <tr>
-                <td>{{elm.currency}}</td>
+                <td>
+                  <tr class="text-bold">{{elm.currency}}</tr>
+                    <tr>
+                        <td>Valor Base:</td>
+                        <td>{{elm.usd | currency}}</td>
+                    </tr>
+                    <!-- <tr>
+                        <td>Valor Expresion:</td>
+                        <td>{{elm.usd * data | currency}}</td>
+                    </tr> -->
+
+
+                </td>
                 <td>
                 <tr *ngFor="let epair of elm.pair">
                     <td>

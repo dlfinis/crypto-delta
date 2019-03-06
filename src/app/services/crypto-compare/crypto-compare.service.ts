@@ -31,9 +31,9 @@ export class CryptoCompareService {
      this.exchange = 'Binance';
   }
 
-  getPrice(coin: String): Observable<any>  {
-    console.log('getPrice');
-    const data = from(cc.price(coin, 'USD'));
+  getPrice(coin: String, base: String): Observable<any>  {
+    console.log('getPrice:', coin, ' to ', base);
+    const data = from(cc.price(coin, base));
     return data.pipe( map(x => x));
   }
 
