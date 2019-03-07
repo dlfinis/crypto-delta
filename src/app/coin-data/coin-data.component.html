@@ -22,8 +22,15 @@
 </div>
 
 <div class="col-md-12">
-    <p-table [value]="dataPair" [lazy]="true" (onLazyLoad)="onLoadCoins($event)" [paginator]="true"
-    [rows]="10" [totalRecords]="totalRecords" [loading]="loading">
+    <p-table [value]="dataPair"
+    [lazy]="true"
+    (onLazyLoad)="onLoadCoins($event)"
+    [paginator]="true"
+    paginatorPosition="top"
+    [rows]="5"
+    [rowsPerPageOptions]="[5,10,20]"
+    [totalRecords]="totalRecords"
+    [loading]="loading">
         <ng-template pTemplate="header">
             <tr>
                 <th>Moneda</th>
@@ -36,22 +43,33 @@
                   <tr class="text-bold">{{elm.currency}}</tr>
                     <tr>
                         <td>Valor Base:</td>
-                        <td>{{elm.usd | currency}}</td>
+                        <td>{{elm.usd | currency:'USD':true:'1.2-5' }}</td>
                     </tr>
-                    <!-- <tr>
-                        <td>Valor Expresion:</td>
-                        <td>{{elm.usd * data | currency}}</td>
-                    </tr> -->
+                    <tr>
+                        <td>Valor:</td>
+                        <td>{{1/elm.nvcoin}}</td>
+                    </tr>
+                    <tr>
+                        <td>Valor Expresion :</td>
+                        <td>{{value_exp/elm.nvcoin}}</td>
+                    </tr>
 
 
                 </td>
                 <td>
-                <tr *ngFor="let epair of elm.pair">
+                  <tr *ngFor="let epair of elm.dpair | keyvalue">
+                    <td>{{epair.key}}:</td>
+                    <td>{{epair.value.USD}} USD - {{epair.value[coin.name]}} {{coin.name}}</td>
+                    <td>*{{epair.key}}:</td>
+                    <td>{{epair.value.USD*value_exp}} USD - {{epair.value[coin.name]*value_exp}} {{coin.name}}</td>
+                  </tr>
+                <!-- <tr *ngFor="let epair of elm.dpair">
                     <td>
-                        {{epair}}:
+                        {{epair | json}}:
                       </td>
-                      <td>0.0</td>
-                </tr>
+                      <td>{{epair.value.USD}} USD</td>
+                      <td>{{epair.value.ETH}} ETH</td>
+                </tr> -->
 
                 </td>
 

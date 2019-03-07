@@ -25,6 +25,7 @@ export class CoinDataComponent implements OnInit {
   displayedColumns: string[];
   cvalue = 0.0;
   loading: boolean;
+  totalRecords = 0;
 
 
   constructor(private _route: ActivatedRoute, private ccService: CryptoCompareService) {
@@ -52,16 +53,25 @@ export class CoinDataComponent implements OnInit {
   }
 
   fnGetPrice(coin: string, base: string) {
-
     return this.ccService.getPrice(coin, base).subscribe(res => {
       console.log(res);
       return res[base];
     });
     // return value;
   }
+
+  onGetPriceMulti(coin: any, base: any) {
+    return this.ccService.getPriceMultiExchange(coin, base);
+  }
+
   onLoadPrice(coin: string, base: string) {
 
     return this.ccService.getPrice(coin, base);
+    // return value;
+  }
+
+  onLoadPriceExchange(coin: string, base: any[]) {
+    return this.ccService.getPriceExchange(coin, base);
     // return value;
   }
 
@@ -75,17 +85,46 @@ export class CoinDataComponent implements OnInit {
     // });
 
     this.ccService.getPairList(this.coin).subscribe(response => {
-      this.dataPair = response;
+      // this.dataPair = response;
+      // console.log(response);
 
-       this.dataPair.map(x => {
-      this.onLoadPrice(x.currency, 'USD').subscribe(res => {
-        console.log('DT', x.currency, '-', res);
-        x.usd = res.USD;
-        // console.log('DT', x);
+      this.totalRecords = response.length;
+      this.dataPair = response.slice(event.first, (event.first + event.rows));
+
+      this.dataPair.map(x => {
+        // this.onLoadPrice(x.currency, 'USD').subscribe(res => {
+        //   console.log('DT', x.currency, '-', res);
+        //   x.usd = res.USD;
+        //   // console.log('DT', x);
+        // });
+
+        // x.pair.splice( x.pair.indexOf(this.coin.name), 1 );
+        // this.onGetPriceMulti(x.currency, ['USD', this.coin.name ]).subscribe( res => {
+        this.onGetPriceMulti(x.currency, x.pair).subscribe( res => {
+          console.log('Pair Response', x.currency, res, x.pair);
+          // x.dpair = [];
+          // const pdata = {name: '', value: []};
+          // x.pair.map( p => {
+          //   for (const pr of Object.keys(res)) {
+          //     console.log(pr);
+          //     // p = pr;
+          //     // pdata.name = pr;
+          //     // pdata.value = res[pr];
+          //     // x.dpair.push(pdata);
+          //   }
+          // });
+          x.dpair = res[x.currency];
+          console.log('Pair', x);
+        });
+        this.onLoadPriceExchange( x.currency, Array.from(['USD', this.coin.name ])).subscribe(res => {
+          console.log('DT', x.currency, '-', res);
+          x.usd = res.USD;
+          x.nvcoin = res[this.coin.name];
+        });
+
+
       });
-    });
 
-      // this.dataPair = response.slice(event.first, (event.first + event.rows));
       this.loading = false;
       // console.log(this.dataPair);
     });
