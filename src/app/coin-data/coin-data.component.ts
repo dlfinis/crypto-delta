@@ -27,6 +27,7 @@ export class CoinDataComponent implements OnInit {
   loading: boolean;
   totalRecords = 0;
 
+  value_exp = 0;
 
   constructor(private _route: ActivatedRoute, private ccService: CryptoCompareService) {
    }
@@ -48,6 +49,19 @@ export class CoinDataComponent implements OnInit {
       this.onLoadPrice(this.coin.name, 'BTC').subscribe(res => {
         this.coin.btc = res.BTC;
       });
+
+      this.onLoadPrice(this.coin.name, 'BNB').subscribe(res => {
+        this.coin.bnb = res.BNB;
+      });
+
+      this.onLoadPrice(this.coin.name, 'USDC').subscribe(res => {
+        this.coin.usdc = res.USDC;
+      });
+
+      this.onLoadPrice(this.coin.name, 'USDT').subscribe(res => {
+        this.coin.usdt = res.USDT;
+      });
+
       console.log(this.coin);
 
   }
@@ -100,8 +114,9 @@ export class CoinDataComponent implements OnInit {
 
         // x.pair.splice( x.pair.indexOf(this.coin.name), 1 );
         // this.onGetPriceMulti(x.currency, ['USD', this.coin.name ]).subscribe( res => {
-        this.onGetPriceMulti(x.currency, x.pair).subscribe( res => {
-          console.log('Pair Response', x.currency, res, x.pair);
+        this.onGetPriceMulti(x.currency, x.pair).subscribe( pairRes => {
+          console.log('Pair Response', x.currency, pairRes, x.pair);
+
           // x.dpair = [];
           // const pdata = {name: '', value: []};
           // x.pair.map( p => {
@@ -113,8 +128,32 @@ export class CoinDataComponent implements OnInit {
           //     // x.dpair.push(pdata);
           //   }
           // });
-          x.dpair = res[x.currency];
-          console.log('Pair', x);
+
+          const pairItem = new Array();
+
+          for (const pr of (Object.keys(pairRes[x.currency]))) {
+            pairItem.push(pr);
+          }
+
+          x.dpair = new Array();
+          pairItem.map(pitem => {
+            // console.log(pitem);
+            this.onGetPriceMulti(pitem, ['USD,BTC,BNB,ETH']).subscribe( subPairRes => {
+              x.dpair.push({item: {name: pitem , value: pairRes[x.currency][pitem] }, value: subPairRes[pitem]});
+              return subPairRes[pitem];
+              });
+          });
+
+          //  for (const pr of (Object.keys(res[x.currency]))) {
+          //   alfa = this.onGetPriceMulti(pr, ['USD,BTC,BNB,ETH']).subscribe( pres => {
+          //     return pres;
+          //   });
+          // }
+          // const dtp = res[x.currency].map(xres => {
+          //   console.log(xres);
+          // });
+
+
         });
         this.onLoadPriceExchange( x.currency, Array.from(['USD', this.coin.name ])).subscribe(res => {
           console.log('DT', x.currency, '-', res);

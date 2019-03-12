@@ -44,7 +44,7 @@ export class CryptoCompareService {
   }
 
   getPriceMultiExchange(coin: any[], base: any[]): Observable<any>  {
-    console.log('getMultiPrice:', coin, ' to ', base, 'from', this.exchange);
+    // console.log('getMultiPrice:', coin, ' to ', base, 'from', this.exchange);
     const data = from(cc.priceMulti(coin, base, Array.from(this.exchange)));
     return data.pipe( map(x => x));
   }
