@@ -3,11 +3,27 @@ import { ActivatedRoute } from '@angular/router';
 import { CoinVO } from '../vo/CoinVO';
 import { CryptoCompareService } from '../services/crypto-compare/crypto-compare.service';
 import { LazyLoadEvent } from 'primeng/api';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+
+
 @Component({
   selector: 'app-coin-data',
   templateUrl: './coin-data.component.html',
   styleUrls: ['./coin-data.component.scss'],
-  providers: [CryptoCompareService]
+  providers: [CryptoCompareService],
+  animations: [
+    trigger('rowExpansionTrigger', [
+        state('void', style({
+            transform: 'translateX(-10%)',
+            opacity: 0
+        })),
+        state('active', style({
+            transform: 'translateX(0)',
+            opacity: 1
+        })),
+        transition('* <=> *', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)'))
+    ])
+  ]
 })
 
 export class CoinDataComponent implements OnInit {
@@ -90,6 +106,7 @@ export class CoinDataComponent implements OnInit {
   }
 
   onLoadCoins(event: LazyLoadEvent) {
+    console.log('onLoadCoins');
     this.loading = true;
     // this.ccService.getCoinsByExchange().then(x => {
     //   console.log(x);
@@ -115,7 +132,7 @@ export class CoinDataComponent implements OnInit {
         // x.pair.splice( x.pair.indexOf(this.coin.name), 1 );
         // this.onGetPriceMulti(x.currency, ['USD', this.coin.name ]).subscribe( res => {
         this.onGetPriceMulti(x.currency, x.pair).subscribe( pairRes => {
-          console.log('Pair Response', x.currency, pairRes, x.pair);
+          // console.log('Pair Response', x.currency, pairRes, x.pair);
 
           // x.dpair = [];
           // const pdata = {name: '', value: []};
@@ -156,11 +173,12 @@ export class CoinDataComponent implements OnInit {
 
         });
         this.onLoadPriceExchange( x.currency, Array.from(['USD', this.coin.name ])).subscribe(res => {
-          console.log('DT', x.currency, '-', res);
+          // console.log('DT', x.currency, '-', res);
           x.usd = res.USD;
           x.nvcoin = res[this.coin.name];
         });
 
+        console.log(x);
 
       });
 

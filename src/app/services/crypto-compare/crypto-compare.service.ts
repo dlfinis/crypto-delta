@@ -32,7 +32,7 @@ export class CryptoCompareService {
   }
 
   getPrice(coin: String, base: String): Observable<any>  {
-    console.log('getPrice:', coin, ' to ', base);
+    // console.log('getPrice:', coin, ' to ', base);
     const data = from(cc.price(coin, base));
     return data.pipe( map(x => x));
   }

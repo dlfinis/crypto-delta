@@ -15,6 +15,10 @@
         <span> {{coin.btc*value_exp | number: '1.2-6' }} </span>
       </div>
       <div class="col-md-10" >
+        <span> {{value_exp | number: '1.2-6' }} </span>
+        <span>  ETH </span>
+      </div>
+      <div class="col-md-10" >
       <span> {{coin.usd | currency}} USD </span>
       <span> {{coin.usd*value_exp | currency}} </span>
       </div>
@@ -36,6 +40,7 @@
 
 <div class="col-md-12">
     <p-table [value]="dataPair"
+    dataKey=""
     [lazy]="true"
     (onLazyLoad)="onLoadCoins($event)"
     [paginator]="true"
@@ -43,15 +48,65 @@
     [rows]="5"
     [rowsPerPageOptions]="[5,10,20]"
     [totalRecords]="totalRecords"
-    [loading]="loading">
+    [loading]="loading"
+    sortField="currency"
+    >
         <ng-template pTemplate="header">
             <tr>
                 <th>Moneda</th>
                 <th>Pares</th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-elm>
+        <ng-template pTemplate="body"
+        let-elm
+        let-rowIndex="rowIndex"
+        let-expanded="expanded" let-columns="columns">
+            <tr class="ui-widget-header">
+                <td colspan="3">
+                  <span style="font-weight:bold">{{elm.currency}}</span>
+                </td>
+            </tr>
             <tr>
+              <td>
+                  <tr>
+                      <td>Valor USD:</td>
+                      <td>{{elm.usd | currency:'USD':true:'1.2-5' }}</td>
+                  </tr>
+                  <tr>
+                      <td>Valor 1 {{coin.name}}:</td>
+                      <td>{{1/elm.nvcoin | number: '1.2-6'}} {{elm.currency}}</td>
+                  </tr>
+                  <tr>
+                      <td>Valor Expresion:</td>
+                      <td>{{value_exp/elm.nvcoin | number: '1.2-6' }} {{elm.currency}}</td>
+                  </tr>
+
+
+              </td>
+              <td>
+                <tr *ngFor="let epair of elm.dpair" class="border">
+                  <!-- <td>{{epair | json}}</td> -->
+                  <td>
+                     <tr>
+                        <td>Base</td>
+                        <td>{{epair.item.value | number: '1.2-6'}} {{epair.item.name}}</td>
+                     </tr>
+                     <tr>
+                        <td>Expresion:</td>
+                        <td>{{(value_exp/elm.nvcoin) * epair.item.value | number: '1.2-6'  }} {{epair.item.name}}</td>
+                     </tr>
+                   </td>
+                  <td>
+                    <tr *ngFor="let evpair of epair.value | keyvalue" class="border">
+                      <td>{{evpair.key}}:</td>
+                      <td>{{((value_exp/elm.nvcoin) * epair.item.value) * evpair.value | number: '1.2-6'}}</td>
+                    </tr>
+
+                </td>
+                </tr>
+              </td>
+            </tr>
+            <!-- <tr>
                 <td>
                   <tr class="text-bold">{{elm.currency}}</tr>
                     <tr>
@@ -72,7 +127,7 @@
                 <td>
                   <tr *ngFor="let epair of elm.dpair" class="border">
                     <!-- <td>{{epair | json}}</td> -->
-                    <td>
+                    <!-- <td>
                        <tr>
                           <td>Base</td>
                           <td>{{epair.item.value | number: '1.2-6'}} {{epair.item.name}}</td>
@@ -90,22 +145,12 @@
 
                   </td>
                   </tr>
-                  <!-- <tr *ngFor="let epair of elm.dpair | keyvalue">
-                    <td>{{epair.key}}:</td>
-                    <td>{{epair.value}}  -- {{epair.value*value_exp/elm.nvcoin}}</td>
-                  </tr> -->
-                <!-- <tr *ngFor="let epair of elm.dpair">
-                    <td>
-                        {{epair | json}}:
-                      </td>
-                      <td>{{epair.value.USD}} USD</td>
-                      <td>{{epair.value.ETH}} ETH</td>
-                </tr> -->
-
                 </td>
+            </tr>  -->
 
-            </tr>
+
         </ng-template>
+
     </p-table>
 
 </div>
