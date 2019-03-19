@@ -51,7 +51,7 @@ export class CryptoCompareService {
 
   getChangeCurrencyList(coin: CoinVO) {
     console.log('getChangeCurrencyList');
-    console.log(this.dataExchangeList.length);
+    // console.log(this.dataExchangeList.length);
     return this.getCoinsByExchange(this.exchange).then( response => {
       return response[coin.name];
     });

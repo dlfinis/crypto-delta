@@ -7,29 +7,21 @@
     <div class="data-float">
 
       <div class="col-md-10" >
+<!--
         <span> {{coin.bnb | number: '1.2-6'}} BNB </span>
-        <span> {{coin.bnb*value_exp | number: '1.2-6' }} </span>
+        <span> {{coin.bnb*value_exp | number: '1.2-6' }} </span> -->
+
+        <div *ngFor="let cn of this.coin.values | keyvalue" class="border">
+          <div>
+            <div class="text-weigth-bold">{{cn.key}}:</div>
+            <span>
+              {{cn.value}}
+            </span>
+          </div>
+            <!-- <td>{{evpair.key}}:</td> -->
+            <!-- <td>{{((value_exp/elm.nvcoin) * epair.item.value) * evpair.value | number: '1.2-6'}}</td> -->
+          </div>
       </div>
-      <div class="col-md-10" >
-        <span> {{coin.btc | number: '1.2-6'}} BTC </span>
-        <span> {{coin.btc*value_exp | number: '1.2-6' }} </span>
-      </div>
-      <div class="col-md-10" >
-        <span> {{value_exp | number: '1.2-6' }} </span>
-        <span>  ETH </span>
-      </div>
-      <div class="col-md-10" >
-      <span> {{coin.usd | currency}} USD </span>
-      <span> {{coin.usd*value_exp | currency}} </span>
-      </div>
-       <div class="col-md-10" >
-          <span> {{coin.usdc | number: '1.2-6'}} USDC </span>
-          <span> {{coin.usdc*value_exp | number: '1.2-6' }} </span>
-       </div>
-       <div class="col-md-10" >
-          <span> {{coin.usdt | number: '1.2-6'}} USDT </span>
-          <span> {{coin.usdt*value_exp | number: '1.2-6' }} </span>
-       </div>
   </div>
        <br>
 
