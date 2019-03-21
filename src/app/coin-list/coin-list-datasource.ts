@@ -65,6 +65,7 @@ export class CoinListDataSource extends DataSource<CryptoCompareCoin> {
       this.sort.sortChange
     ];
 
+    // this.coinService.getCoinsByExchange(this.name_exchange).subscribe( x => console.log(x));
     const dataExchange = this.coinService.getCoinsByExchange(this.name_exchange)
     .pipe(
       tap(data => {
@@ -75,6 +76,8 @@ export class CoinListDataSource extends DataSource<CryptoCompareCoin> {
     return merge(...dataMutations).pipe(map(() => {
       return this.getPagedData(this.getSortedData([...this.data]));
     }));
+
+    // return null;
   }
 
   /**

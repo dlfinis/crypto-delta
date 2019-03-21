@@ -144,7 +144,7 @@ export class CryptoCompareService {
         rObj[key] = exc[key];
         return rObj;
       }, {});
-      // console.log(data);
+      console.log(data[exchange]);
       this.dataCoinsExchange = data[exchange];
       return data[exchange];
     });
