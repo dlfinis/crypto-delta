@@ -52,9 +52,8 @@ export class CryptoCompareService {
   getChangeCurrencyList(coin: CoinVO) {
     console.log('getChangeCurrencyList');
     // console.log(this.dataExchangeList.length);
-    return this.getCoinsByExchange(this.exchange).then( response => {
-      return response[coin.name];
-    });
+    const data = from(this.getCoinsByExchange(this.exchange));
+    return data.pipe(map(response => response[coin.name]));
   }
 
   getPairList(coin: CoinVO): Observable<any> {
@@ -130,10 +129,12 @@ export class CryptoCompareService {
 
   getCoinsByExchange(exchange: string) {
 
-    // console.log(Object.keys(this.dataExchangeList));
-    // if (Object.keys(this.dataExchangeList).length > 1) {
-    //   return this.dataExchangeList;
-    // }
+
+    if (this.dataExchangeList && Object.keys(this.dataExchangeList).length > 1) {
+      console.log('Data Exchange List', Object.keys(this.dataExchangeList).length);
+      return this.dataExchangeList;
+
+    }
 
     return this.dataExchangeList = cc.exchangeList().then( exc => {
       console.log('Get Data from:' + exchange);

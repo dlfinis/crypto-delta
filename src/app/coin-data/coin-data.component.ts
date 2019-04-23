@@ -4,7 +4,8 @@ import { CoinVO } from '../vo/CoinVO';
 import { CryptoCompareService } from '../services/crypto-compare/crypto-compare.service';
 import { LazyLoadEvent } from 'primeng/api';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Observable } from 'rxjs';
+import { Observable, of, concat, combineLatest, forkJoin, zip, timer, range, observable  } from 'rxjs';
+import { flatMap, mergeMap, switchAll, delay, merge, switchMap, map, scan, filter, concatMap } from 'rxjs/operators';
 
 
 @Component({
@@ -110,153 +111,98 @@ export class CoinDataComponent implements OnInit {
       return this.onLoadPriceExchange(this.coin.name, baseCoins || this.base_coins);
   }
 
-  fnGetChange(coin: any): Observable<any> {
+  // fnGetChange(coin: any): Observable<any> {
+  fnGetChange(coin: any) {
 
-    return Observable.create(function(observer) {
-      this.ccService.getChangeCurrencyList(coin).then(response => {
-      console.log('fnGetBaseCurrency', response);
+    const s1 = of('a', 'b', 'c', 'd');
 
-      return this.fnGetBaseCurrency(response).subscribe(responseB => {
-        coin['values'] = responseB;
-        this.onLoadPrice(coin.name, 'USD').subscribe(res => {
-          console.log(res);
-          coin['values']['USD'] =  res.USD;
-          observer.next(coin);
-        });
+    const s2 = of('x', 'y', 'z', '1', '2', '3');
 
+    const observable = zip(
+      of(1, 2, 3, 4).pipe(delay(100)),
+      of('a', 'b', 'c', 'd'),
+    );
+
+      s1.pipe(st1 => {
+        return s2.pipe(map(st2 => st2 + '' + st1));
+      }).subscribe(x => {
+        console.log(x);
       });
 
-    });
+    observable.subscribe(
+      value => console.log(value),
+      err => {},
+      () => console.log('This is how it ends!'),
+    );
+
+
+    const source$ = range(0, 10);
+
+// source$.pipe(
+//   filter(x => x % 2 === 0),
+//   map(x => x + 1),
+//   scan((acc, x) => acc + x, 0)
+// )
+// .subscribe(x => console.log(x))
+
+
+    // s1.pipe(switchMap(c => timer(0, 30).pipe(map(v => v)))).subscribe(
+    //   value => console.log(value),
+    //   err => {},
+    //   () => console.log('This is how it ends! switch'),
+    // );
+
+
+
+    // result$.subscribe(console.log);
+
+      // const list = this.ccService.getChangeCurrencyList(coin);
+
+      // series1$
+
+  }
+
+  fnGetBaseChanges(): Observable<any> {
+
+  return Observable.create((observer) => {
+    try {
+      this.ccService.getChangeCurrencyList(this.coin).subscribe(response => {
+        console.log('fnGetBaseChanges =>', response.length);
+        this.fnGetBaseCurrency(response).subscribe(responseB => {
+          observer.next(responseB);
+        });
+        observer.complete();
+      });
+    } catch (error) {
+      observer.error(error);
+    }
   });
   }
 
+  fnGetBaseChangesList(): any {
+    //   this.ccService.getChangeCurrencyList(this.coin).subscribe(response => {
+    //   console.log('fnGetBaseChangesList =>', response.length);
+    //    this.fnGetBaseCurrency(response);
+    // });
+    return this.ccService.getChangeCurrencyList(this.coin).pipe(
+      concatMap(x => <Observable<any>> this.fnGetBaseCurrency(x)));
 
+  }
+
+  fnGetPairChangesList(coin: CoinVO): any {
+    return this.ccService.getChangeCurrencyList(coin).pipe(
+      concatMap(x => <Observable<any>> this.fnGetBaseCurrency(x).pipe()));
+
+  }
 
   onLoadCoins(event: LazyLoadEvent) {
     console.log('onLoadCoins');
     this.loading = true;
-    // this.ccService.getCoinsByExchange('Binance').then(x => {
-      //   console.log(x);
-      // });
       console.log('Coin:', this.coin);
 
-      const f1 = this.fnGetChange(this.coin).subscribe(res => {
-        return res;
-      });
-      // const cnt = this.fnCoin();
-      // console.log(cnt);
-
-    // this.ccService.getChangeCurrencyList(this.coin).then(response => {
-    //   console.log('fnGetBaseCurrency', response);
-    //   this.fnGetBaseCurrency(response).subscribe(responseB => {
-    //     // console.log(responseB);
-    //     this.coin['values'] = responseB;
-    //     // Object.keys(responseB).map(rB => {
-    //     //   this.coin['values'] = responseB[rB];
-    //     // });
-    //     this.onLoadPrice(this.coin.name, 'USD').subscribe(res => {
-    //       console.log(res);
-    //       this.coin['values']['USD'] =  res.USD;
-    //     });
-
-    //   });
-
-    //   console.log('Fill Coin Base', this.coin);
-    // });
-
-    // console.log('getPairList');
-    // // this.ccService.getPairList(this.coin).subscribe(response => {
-    // //   // this.dataPair = response;
-    // //   console.log('getPairList', response);
-    // //   this.totalRecords = response.length;
-    // //   this.dataPair = response.slice(event.first, (event.first + event.rows));
+      this.fnGetBaseChangesList().subscribe( x => this.coin['values'] = x);
 
 
-    // // });
 
-    // this.ccService.getPairList(this.coin).subscribe(response => {
-    //   // this.dataPair = response;
-    //   console.log(response);
-
-    //   if (response.length > 0) {
-    //     this.totalRecords = response.length;
-    //     this.dataPair = response.slice(event.first, (event.first + event.rows));
-    //   } else {
-    //     this.totalRecords = this.coin.values.length;
-    //     this.dataPair = this.coin.values.slice(event.first, (event.first + event.rows));
-    //   }
-
-    //   this.dataPair.map(x => {
-    //     // this.onLoadPrice(x.currency, 'USD').subscribe(res => {
-    //     //   console.log('DT', x.currency, '-', res);
-    //     //   x.usd = res.USD;
-    //     //   // console.log('DT', x);
-    //     // });
-
-    //     // x.pair.splice( x.pair.indexOf(this.coin.name), 1 );
-    //     // this.onGetPriceMulti(x.currency, ['USD', this.coin.name ]).subscribe( res => {
-    //     this.onGetPriceMulti(x.currency, x.pair).subscribe( pairRes => {
-    //       console.log('Pair Response', x.currency, pairRes, x.pair);
-
-    //       // x.dpair = [];
-    //       // const pdata = {name: '', value: []};
-    //       // x.pair.map( p => {
-    //       //   for (const pr of Object.keys(res)) {
-    //       //     console.log(pr);
-    //       //     // p = pr;
-    //       //     // pdata.name = pr;
-    //       //     // pdata.value = res[pr];
-    //       //     // x.dpair.push(pdata);
-    //       //   }
-    //       // });
-
-    //       const pairItem = new Array();
-
-    //       for (const pr of (Object.keys(pairRes[x.currency]))) {
-    //         pairItem.push(pr);
-    //       }
-
-    //       x.dpair = new Array();
-    //       pairItem.map(pitem => {
-    //         // console.log(pitem);
-    //         this.onGetPriceMulti(pitem, [this.base_coins]).subscribe( subPairRes => {
-    //           x.dpair.push({item: {name: pitem , value: pairRes[x.currency][pitem] }, value: subPairRes[pitem]});
-    //           return subPairRes[pitem];
-    //           });
-    //       });
-
-    //       //  for (const pr of (Object.keys(res[x.currency]))) {
-    //       //   alfa = this.onGetPriceMulti(pr, ['USD,BTC,BNB,ETH']).subscribe( pres => {
-    //       //     return pres;
-    //       //   });
-    //       // }
-    //       // const dtp = res[x.currency].map(xres => {
-    //       //   console.log(xres);
-    //       // });
-
-
-    //     });
-    //     this.onLoadPriceExchange( x.currency, Array.from(['USD', this.coin.name ])).subscribe(res => {
-    //       console.log('DT', x.currency, '-', res);
-    //       x.usd = res.USD;
-    //       x.nvcoin = res[this.coin.name];
-    //     });
-
-
-    //     console.log(x);
-
-    //   });
-
-    //   this.loading = false;
-    // });
-
-    // const tmp =  this.dataPair.map(x => {
-    //   this.onLoadPrice(x.currency).subscribe(res => {
-    //     console.log('DT', x.currency, '-', res);
-    //     x.usd = res.USD;
-    //   });
-    // });
-
-    // this.dataPair = [...tmp];
   }
 }
