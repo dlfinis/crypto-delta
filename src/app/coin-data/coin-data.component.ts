@@ -5,7 +5,7 @@ import { CryptoCompareService } from '../services/crypto-compare/crypto-compare.
 import { LazyLoadEvent } from 'primeng/api';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Observable, of, concat, combineLatest, forkJoin, zip, timer, range, observable  } from 'rxjs';
-import { flatMap, mergeMap, switchAll, delay, merge, switchMap, map, scan, filter, concatMap } from 'rxjs/operators';
+import { flatMap, mergeMap, switchAll, delay, merge, switchMap, map, scan, filter, concatMap, finalize } from 'rxjs/operators';
 
 
 @Component({
@@ -179,30 +179,35 @@ export class CoinDataComponent implements OnInit {
   });
   }
 
-  fnGetBaseChangesList(): any {
-    //   this.ccService.getChangeCurrencyList(this.coin).subscribe(response => {
-    //   console.log('fnGetBaseChangesList =>', response.length);
-    //    this.fnGetBaseCurrency(response);
-    // });
+  fnGetBaseChangesList(coin: CoinVO): any {
+    console.log('fnGetBaseChangesList');
     return this.ccService.getChangeCurrencyList(this.coin).pipe(
-      concatMap(x => <Observable<any>> this.fnGetBaseCurrency(x)));
-
+      concatMap(x => <Observable<any>> this.fnGetBaseCurrency(x)))
+      .subscribe(x => coin.values = x);
   }
 
-  fnGetPairChangesList(coin: CoinVO): any {
-    return this.ccService.getChangeCurrencyList(coin).pipe(
-      concatMap(x => <Observable<any>> this.fnGetBaseCurrency(x).pipe()));
-
+  fnGetPairChangesList(coin: CoinVO, event: LazyLoadEvent): any {
+    console.log('fnGetPairChangesList');
+    return  this.ccService.getPairList(this.coin).pipe(finalize(() => console.log('Sequence complete')))
+    .subscribe(response => {
+      if (response.length > 0) {
+        this.totalRecords = response.length;
+        this.dataPair = response.slice(event.first, (event.first + event.rows));
+      } else {
+        this.totalRecords = this.coin.values.length;
+        this.dataPair = this.coin.values.slice(event.first, (event.first + event.rows));
+      }
+    });
   }
+
+
 
   onLoadCoins(event: LazyLoadEvent) {
     console.log('onLoadCoins');
     this.loading = true;
       console.log('Coin:', this.coin);
 
-      this.fnGetBaseChangesList().subscribe( x => this.coin['values'] = x);
-
-
-
+      this.fnGetBaseChangesList(this.coin);
+      this.fnGetPairChangesList(this.coin, event);
   }
 }
