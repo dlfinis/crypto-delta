@@ -92,8 +92,10 @@ export class CoinDataComponent implements OnInit {
     // return value;
   }
 
-  onGetPriceMulti(coin: any, base: any) {
+  fnGetPriceMulti(coin: any, base: any) {
+    console.log('onGetPriceMulti', coin, base);
     return this.ccService.getPriceMultiExchange(coin, base);
+
   }
 
   onLoadPrice(coin: string, base: string) {
@@ -188,26 +190,45 @@ export class CoinDataComponent implements OnInit {
 
   fnGetPairChangesList(coin: CoinVO, event: LazyLoadEvent): any {
     console.log('fnGetPairChangesList');
-    return  this.ccService.getPairList(this.coin).pipe(finalize(() => console.log('Sequence complete')))
+    return  this.ccService.getPairList(this.coin).pipe(
+    finalize(() => console.log('Sequence complete')))
     .subscribe(response => {
-      if (response.length > 0) {
-        this.totalRecords = response.length;
-        this.dataPair = response.slice(event.first, (event.first + event.rows));
-      } else {
-        this.totalRecords = this.coin.values.length;
-        this.dataPair = this.coin.values.slice(event.first, (event.first + event.rows));
-      }
+        this.onPagination(response, event);
+    });
+ }
+
+
+  onProcessAddPricesList(coinPairList: any) {
+    if (coinPairList !== undefined && coinPairList.length > 0) {
+    return coinPairList.map(x => {
+      this.fnGetPriceMulti(x.currency, x.pair).subscribe( pairRes => {
+        console.log(pairRes);
+      });
     });
   }
+  }
+  onPagination(dataList: any, event: LazyLoadEvent) {
 
+    if (dataList.length > 0) {
+      this.totalRecords = dataList.length;
+      this.dataPair = dataList.slice(event.first, (event.first + event.rows));
+    } else {
+      this.totalRecords = this.coin.values.length;
+      this.dataPair = this.coin.values.slice(event.first, (event.first + event.rows));
+    }
 
-
+  }
   onLoadCoins(event: LazyLoadEvent) {
     console.log('onLoadCoins');
     this.loading = true;
       console.log('Coin:', this.coin);
 
-      this.fnGetBaseChangesList(this.coin);
-      this.fnGetPairChangesList(this.coin, event);
+      const execData = concat(
+        this.fnGetBaseChangesList(this.coin),
+        this.fnGetPairChangesList(this.coin, event),
+        this.onProcessAddPricesList(this.dataPair)
+      );
+
+      this.loading = false;
   }
 }
