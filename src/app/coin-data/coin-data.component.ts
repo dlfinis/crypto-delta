@@ -194,19 +194,50 @@ export class CoinDataComponent implements OnInit {
     finalize(() => console.log('Sequence complete')))
     .subscribe(response => {
         this.onPagination(response, event);
+        this.onProcessAddPricesList(this.dataPair);
+
+        this.loading = false;
     });
  }
 
 
   onProcessAddPricesList(coinPairList: any) {
+    console.log('onProcessAddPricesList');
     if (coinPairList !== undefined && coinPairList.length > 0) {
+
     return coinPairList.map(x => {
       this.fnGetPriceMulti(x.currency, x.pair).subscribe( pairRes => {
-        console.log(pairRes);
+        console.log('Pair Response', x.currency, x.pair, pairRes);
+
+        const pairItem = new Array();
+        //console.log(pairRes);
+        //console.log(pairRes[x.currency]);
+
+        pairRes[x.currency].map(x => {
+          console.log(x);
+        });
+        // for (const pr of (Object.keys(pairRes[x.currency]))) {
+        //   pairItem.push(pr);
+        // }
+        // console.log(pairItem);
+
+        // x.dpair = new Array();
+        // pairItem.map(pitem => {
+
+        //   this.fnGetPriceMulti(pitem, [this.base_coins]).subscribe( subPairRes => {
+        //     x.dpair.push({item: {name: pitem , value: pairRes[x.currency][pitem] }, value: subPairRes[pitem]});
+        //     return subPairRes[pitem];
+        //     });
+
+        // });
+
+        // console.log(x.dpair);
+
       });
     });
   }
   }
+
   onPagination(dataList: any, event: LazyLoadEvent) {
 
     if (dataList.length > 0) {
@@ -218,6 +249,9 @@ export class CoinDataComponent implements OnInit {
     }
 
   }
+  onGetSubPair(){
+
+  }
   onLoadCoins(event: LazyLoadEvent) {
     console.log('onLoadCoins');
     this.loading = true;
@@ -225,10 +259,9 @@ export class CoinDataComponent implements OnInit {
 
       const execData = concat(
         this.fnGetBaseChangesList(this.coin),
-        this.fnGetPairChangesList(this.coin, event),
-        this.onProcessAddPricesList(this.dataPair)
+        this.fnGetPairChangesList(this.coin, event)
       );
 
-      this.loading = false;
+
   }
 }
