@@ -6,6 +6,7 @@ import { LazyLoadEvent } from 'primeng/api';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Observable, of, concat, combineLatest, forkJoin, zip, timer, range, observable  } from 'rxjs';
 import { flatMap, mergeMap, switchAll, delay, merge, switchMap, map, scan, filter, concatMap, finalize } from 'rxjs/operators';
+import { PairCoinVO } from '../vo/PairCoinVO';
 
 
 @Component({
@@ -205,21 +206,43 @@ export class CoinDataComponent implements OnInit {
     console.log('onProcessAddPricesList');
     if (coinPairList !== undefined && coinPairList.length > 0) {
 
-    return coinPairList.map(x => {
-      this.fnGetPriceMulti(x.currency, x.pair).subscribe( pairRes => {
-        console.log('Pair Response', x.currency, x.pair, pairRes);
+
+    return coinPairList.map(coin => {
+      this.fnGetPriceMulti(coin.currency, coin.pair).subscribe( pairRes => {
+        console.log('----- Pair Response',
+        '\nCurrency: ', coin.currency,
+        '\nPair :', coin.pair,
+        '\nPairRes :', pairRes,
+        '\n------');
 
         const pairItem = new Array();
         //console.log(pairRes);
-        //console.log(pairRes[x.currency]);
+        //console.log(pairRes[coin.currency]);
 
-        pairRes[x.currency].map(x => {
-          console.log(x);
-        });
-        // for (const pr of (Object.keys(pairRes[x.currency]))) {
+        const pairData = of(Object.keys(pairRes[coin.currency]));
+
+        // for (const pr of (Object.keys(pairRes[coin.currency]))) {
         //   pairItem.push(pr);
         // }
-        // console.log(pairItem);
+        console.log('PairData', Object.keys(pairRes[coin.currency]));
+        const pData = pairData.pipe(map(pitem => {
+            return this.fnGetPriceMulti(pitem, [this.base_coins]).subscribe(subPairRes => {
+              console.log('-->', subPairRes);
+
+              const objItem = new PairCoinVO().fill(pitem, null, pairRes[coin.currency]);
+              pairItem.push(objItem);
+
+              console.log(objItem);
+              return objItem;
+            });
+        }));
+
+        pData.subscribe(item => {
+
+        });
+
+
+
 
         // x.dpair = new Array();
         // pairItem.map(pitem => {
