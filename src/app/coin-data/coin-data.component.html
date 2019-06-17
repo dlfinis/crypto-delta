@@ -15,11 +15,12 @@
           <div>
             <div class="text-weigth-bold">{{cn.key}}:</div>
             <span>
-              {{cn.value}}
+              <!-- {{cn.value}} -->
+              {{(value_exp * cn.value) | number: '1.2-6'}}
             </span>
           </div>
             <!-- <td>{{evpair.key}}:</td> -->
-            <!-- <td>{{((value_exp/elm.nvcoin) * epair.item.value) * evpair.value | number: '1.2-6'}}</td> -->
+            <!-- <td>{{(value_exp * cn.value) | number: '1.2-6'}}</td> -->
           </div>
       </div>
   </div>
@@ -59,7 +60,9 @@
                 </td>
             </tr>
             <tr>
+
               <td>
+                  <!-- <pre>{{elm | json}}</pre> -->
                   <tr>
                       <td>Valor USD:</td>
                       <td>{{elm.usd | currency:'USD':true:'1.2-5' }}</td>
@@ -76,14 +79,34 @@
 
               </td>
               <td>
-                <tr *ngFor="let epair of elm.dpair" class="border">
-                  <!-- <td>{{epair | json}}</td> -->
+                <tr *ngFor="let epair of elm.values" class="border">
                   <td>
-                     <tr>
-                        <td>Base</td>
-                        <td>{{epair.item.value | number: '1.2-6'}} {{epair.item.name}}</td>
+                    <tr class="font-weight-bold">
+                        {{epair.name}}
+                    </tr>
+                    <tr>
+                          <table class="table table-striped table-bordered">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th *ngFor="let item of fnGetKeys(epair.value)">
+                                        {{item}}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                  <td *ngFor="let item of fnGetKeys(epair.value)">
+                                      {{epair.value[item]}}
+                                      <!-- {{value_exp * epair.value[item] | number: '1.2-6'}} -->
+
+                                  </td>
+                              </tr>
+                            </tbody>
+                            </table>
+
+
                      </tr>
-                     <tr>
+                     <!-- <tr>
                         <td>Expresion:</td>
                         <td>{{(value_exp/elm.nvcoin) * epair.item.value | number: '1.2-6'  }} {{epair.item.name}}</td>
                      </tr>
@@ -92,7 +115,7 @@
                     <tr *ngFor="let evpair of epair.value | keyvalue" class="border">
                       <td>{{evpair.key}}:</td>
                       <td>{{((value_exp/elm.nvcoin) * epair.item.value) * evpair.value | number: '1.2-6'}}</td>
-                    </tr>
+                    </tr> -->
 
                 </td>
                 </tr>

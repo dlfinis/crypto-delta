@@ -46,7 +46,7 @@ export class CoinDataComponent implements OnInit {
   loading: boolean;
   totalRecords = 0;
 
-  value_exp = 0;
+  value_exp = 0.171;
 
   base_coins = ['USD', 'BNB', 'BTC', 'ETH', 'USDC', 'USDT', 'PAX', 'TUSD'];
 
@@ -111,11 +111,16 @@ export class CoinDataComponent implements OnInit {
     // return value;
   }
 
+  fnGetValue(listCoins: any) {
+
+  }
+
   fnListRemovedElement(list: any, nameElement) {
     const blist = list;
       blist.splice(blist.indexOf(nameElement), 1);
       return blist;
   }
+
   fnGetBaseCurrency(baseCoins: any) {
       return this.onLoadPriceExchange(this.coin.name,
         this.fnListRemovedElement(this.base_coins, this.coin.name));
@@ -208,10 +213,14 @@ export class CoinDataComponent implements OnInit {
     });
  }
 
+  fnGetKeys(array: any) {
+    return Object.keys(array);
+  }
 
   onProcessAddPricesList(coinPairList: any) {
     console.log('==== onProcessAddPricesList ===', coinPairList);
     if (coinPairList !== undefined && coinPairList.length > 0) {
+
 
 
     return coinPairList.map(coin => {
@@ -225,46 +234,32 @@ export class CoinDataComponent implements OnInit {
         const pairItems = new Array();
 
         const pairList = Object.keys(pairRes[coin.currency]);
-        // for (const pr of (Object.keys(pairRes[coin.currency]))) {
-        //   pairItem.push(pr);
-        // }
-        console.log('--- PairList *---', pairList);
-        // const pData = pairData.pipe(map(pitem => {
-        //     return this.fnGetPriceMulti(pitem, [this.base_coins]).subscribe(subPairRes => {
-        //       console.log('-->', subPairRes);
 
-        //       const objItem = new PairCoinVO().fill(pitem, null, pairRes[coin.currency]);
-        //       pairItem.push(objItem);
-
-        //       console.log(objItem);
-        //       return objItem;
-        //     });
-        // }));
-
-        // concatMap(x => <Observable<any>> this.fnGetBaseCurrency(x)))
-
+        // console.log('--- PairList *---', pairList);
         const pData = of(pairList).pipe(
           concatMap(pairCoin => <Observable<any>> this.fnGetPriceMulti(pairCoin, [this.base_coins])));
 
           const pDataAll = of(pairList).pipe(
             mergeMap(pairCoin => <Observable<any>> this.fnGetPriceMulti(pairCoin, [this.base_coins])));
 
-            //pDataAll.subscribe(x => console.log(x));
-
             pDataAll.subscribe(pairs => {
-              // console.log(pairs);
-              // pairs.forEach(x => console.log('pairItem', x));
+              //  console.log(pairs);
                 pairList.forEach(pairName =>  {
                   const objItem = new PairCoinVO();
 
-                  console.log('Pair Value', pairs[pairName]);
+                  delete pairs[pairName][pairName];
+
+                  const dataPairs = Object.keys(pairs[pairName])
+                   .map(kdata => {
+                    return { [kdata] : pairs[pairName][kdata]};
+                  });
+
+
                   objItem.fill(pairName, null, pairs[pairName]);
                   pairItems.push(objItem);
-
                 });
-                //console.log('-- pairList Values',  pairItem);
                 coin.values = pairItems;
-                console.log(coin);
+                // console.log(coin);
             });
 
         // pData.subscribe(item => {
@@ -312,7 +307,7 @@ export class CoinDataComponent implements OnInit {
     }
 
   }
-  onGetSubPair(){
+  onGetSubPair() {
 
   }
   onLoadCoins(event: LazyLoadEvent) {
