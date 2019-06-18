@@ -46,7 +46,7 @@ export class CoinDataComponent implements OnInit {
   loading: boolean;
   totalRecords = 0;
 
-  value_exp = 0.171;
+  value_exp = 0.076;
 
   base_coins = ['USD', 'BNB', 'BTC', 'ETH', 'USDC', 'USDT', 'PAX', 'TUSD'];
 
@@ -90,7 +90,6 @@ export class CoinDataComponent implements OnInit {
       console.log(res);
       return res[base];
     });
-    // return value;
   }
 
   fnGetPriceMulti(coin: any, base: any) {
@@ -100,19 +99,12 @@ export class CoinDataComponent implements OnInit {
   }
 
   onLoadPrice(coin: string, base: string) {
-
     return this.ccService.getPrice(coin, base);
-    // return value;
   }
 
   onLoadPriceExchange(coin: string, base: any[]) {
     console.log('--- onLoadPriceExchange --- ', coin, base);
     return this.ccService.getPriceExchange(coin, base);
-    // return value;
-  }
-
-  fnGetValue(listCoins: any) {
-
   }
 
   fnListRemovedElement(list: any, nameElement) {
@@ -126,56 +118,7 @@ export class CoinDataComponent implements OnInit {
         this.fnListRemovedElement(this.base_coins, this.coin.name));
   }
 
-  // fnGetChange(coin: any): Observable<any> {
-  fnGetChange(coin: any) {
 
-    const s1 = of('a', 'b', 'c', 'd');
-
-    const s2 = of('x', 'y', 'z', '1', '2', '3');
-
-    const observable = zip(
-      of(1, 2, 3, 4).pipe(delay(100)),
-      of('a', 'b', 'c', 'd'),
-    );
-
-      s1.pipe(st1 => {
-        return s2.pipe(map(st2 => st2 + '' + st1));
-      }).subscribe(x => {
-        console.log(x);
-      });
-
-    observable.subscribe(
-      value => console.log(value),
-      err => {},
-      () => console.log('This is how it ends!'),
-    );
-
-
-    const source$ = range(0, 10);
-
-// source$.pipe(
-//   filter(x => x % 2 === 0),
-//   map(x => x + 1),
-//   scan((acc, x) => acc + x, 0)
-// )
-// .subscribe(x => console.log(x))
-
-
-    // s1.pipe(switchMap(c => timer(0, 30).pipe(map(v => v)))).subscribe(
-    //   value => console.log(value),
-    //   err => {},
-    //   () => console.log('This is how it ends! switch'),
-    // );
-
-
-
-    // result$.subscribe(console.log);
-
-      // const list = this.ccService.getChangeCurrencyList(coin);
-
-      // series1$
-
-  }
 
   fnGetBaseChanges(): Observable<any> {
 
@@ -221,8 +164,6 @@ export class CoinDataComponent implements OnInit {
     console.log('==== onProcessAddPricesList ===', coinPairList);
     if (coinPairList !== undefined && coinPairList.length > 0) {
 
-
-
     return coinPairList.map(coin => {
       this.fnGetPriceMulti(coin.currency, coin.pair).subscribe( pairRes => {
         console.log('----- Pair Response',
@@ -230,6 +171,13 @@ export class CoinDataComponent implements OnInit {
         '\nPair :', coin.pair,
         '\nPairRes :', pairRes,
         '\n------');
+
+        coin.pair.unshift('USD');
+
+        this.fnGetPriceMulti(coin.currency, coin.pair).subscribe(response => {
+          coin.value = response[coin.currency];
+          //console.log('---- Data Base ', response);
+        });
 
         const pairItems = new Array();
 
@@ -259,7 +207,7 @@ export class CoinDataComponent implements OnInit {
                   pairItems.push(objItem);
                 });
                 coin.values = pairItems;
-                // console.log(coin);
+                console.log(coin);
             });
 
         // pData.subscribe(item => {

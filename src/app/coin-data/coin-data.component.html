@@ -63,9 +63,9 @@
 
               <td>
                   <!-- <pre>{{elm | json}}</pre> -->
-                  <tr>
+                  <!-- <tr>
                       <td>Valor USD:</td>
-                      <td>{{elm.usd | currency:'USD':true:'1.2-5' }}</td>
+                      <td>{{elm.value.USD | currency:'USD':true:'1.2-5' }}</td>
                   </tr>
                   <tr>
                       <td>Valor 1 {{coin.name}}:</td>
@@ -74,8 +74,14 @@
                   <tr>
                       <td>Valor Expresion:</td>
                       <td>{{value_exp/elm.nvcoin | number: '1.2-6' }} {{elm.currency}}</td>
-                  </tr>
+                  </tr> -->
 
+                  <tr *ngFor="let item of fnGetKeys(elm.value)">
+                      {{item}} : {{elm.value[item]}}
+                      <td>
+                        Valor: {{value_exp / elm.value[item]}}
+                      </td>
+                  </tr>
 
               </td>
               <td>
