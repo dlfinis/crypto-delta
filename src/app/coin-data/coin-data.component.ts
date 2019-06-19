@@ -46,7 +46,7 @@ export class CoinDataComponent implements OnInit {
   loading: boolean;
   totalRecords = 0;
 
-  value_exp = 0.076;
+  value_exp = 0.171;
 
   base_coins = ['USD', 'BNB', 'BTC', 'ETH', 'USDC', 'USDT', 'PAX', 'TUSD'];
 
@@ -141,7 +141,7 @@ export class CoinDataComponent implements OnInit {
     console.log('=== fnGetBaseChangesList ===');
     return this.ccService.getChangeCurrencyList(this.coin).pipe(
       concatMap(x => <Observable<any>> this.fnGetBaseCurrency(x)))
-      .subscribe(x => coin.values = x);
+      .subscribe(x => coin.baseValues = x);
   }
 
   fnGetPairChangesList(coin: CoinVO, event: LazyLoadEvent): any {
@@ -161,9 +161,11 @@ export class CoinDataComponent implements OnInit {
   }
 
   onProcessAddPricesList(coinPairList: any) {
+
     console.log('==== onProcessAddPricesList ===', coinPairList);
     if (coinPairList !== undefined && coinPairList.length > 0) {
 
+      this.coin.values = {};
     return coinPairList.map(coin => {
       this.fnGetPriceMulti(coin.currency, coin.pair).subscribe( pairRes => {
         console.log('----- Pair Response',
@@ -174,10 +176,11 @@ export class CoinDataComponent implements OnInit {
 
         coin.pair.unshift('USD');
 
-        this.fnGetPriceMulti(coin.currency, coin.pair).subscribe(response => {
-          coin.value = response[coin.currency];
-          //console.log('---- Data Base ', response);
-        });
+
+      this.onLoadPrice(this.coin.name, coin.currency).subscribe(res => {
+        console.log(this.coin.name, res, this.value_exp * res[coin.currency]);
+        this.coin.values[coin.currency] = res[coin.currency];
+      });
 
         const pairItems = new Array();
 
@@ -204,40 +207,19 @@ export class CoinDataComponent implements OnInit {
 
 
                   objItem.fill(pairName, null, pairs[pairName]);
-                  pairItems.push(objItem);
+
+                  this.onLoadPrice(coin.currency, pairName).subscribe(res => {
+                    console.log(coin.currency, pairName, res);
+                    objItem.conversion = res[pairName];
+                    pairItems.push(objItem);
+                  });
+
                 });
                 coin.values = pairItems;
                 console.log(coin);
+                console.log(this.coin);
+
             });
-
-        // pData.subscribe(item => {
-        //   // item.sub
-        //   // const objItem = new PairCoinVO();
-        //   // objItem.fill(item, null, pairRes[coin.currency]);
-        //   console.log('pData: From', coin.currency, ' To:', item);
-
-        //   pairList.forEach(pairName =>  {
-        //     const objItem = new PairCoinVO();
-        //     objItem.fill(pairName, null, item[pairName]);
-        //     console.log('-- pairList Values', objItem);
-        //   });
-
-        // });
-
-
-
-
-        // x.dpair = new Array();
-        // pairItem.map(pitem => {
-
-        //   this.fnGetPriceMulti(pitem, [this.base_coins]).subscribe( subPairRes => {
-        //     x.dpair.push({item: {name: pitem , value: pairRes[x.currency][pitem] }, value: subPairRes[pitem]});
-        //     return subPairRes[pitem];
-        //     });
-
-        // });
-
-        // console.log(x.dpair);
 
       });
     });

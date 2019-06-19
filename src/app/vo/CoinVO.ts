@@ -7,8 +7,8 @@ export class CoinVO {
     public symbol?: string;
     public trading?: boolean;
     public sortOrder?: number;
-    public values?: [];
-    public fiat?: [];
+    public values?: any;
+    public baseValues?: any;
     public item?: any;
 
     public fill(name: any, id: string, url: string, image, symbol: string, sortOrder: string, trading: boolean) {
