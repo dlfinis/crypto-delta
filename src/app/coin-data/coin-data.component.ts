@@ -46,9 +46,10 @@ export class CoinDataComponent implements OnInit {
   loading: boolean;
   totalRecords = 0;
 
-  value_exp = 0.171;
+  value_exp = 0.004762;
+  percent_comp = 0.5;
 
-  base_coins = ['USD', 'BNB', 'BTC', 'ETH', 'USDC', 'USDT', 'PAX', 'TUSD'];
+  base_coins = ['ETH', 'BCH', 'BNB', 'BTC', 'PAX', 'USDC', 'USDT', 'TUSD', 'USD'];
 
   constructor(private _route: ActivatedRoute, private ccService: CryptoCompareService) {
    }
@@ -158,6 +159,23 @@ export class CoinDataComponent implements OnInit {
 
   fnGetKeys(array: any) {
     return Object.keys(array);
+  }
+
+  fnIsGreaterThat(value: number, comp: number) {
+    if (comp) {
+      // const pr_comp = (comp * this.percent_comp) + comp;
+      const pr_comp = (comp * (this.percent_comp / 100)) + comp;
+      if (value >= pr_comp) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  fnCalculate(value_exp: number, value_coin: number, value_pair_conv: number, value_pair: number) {
+    const result = (value_exp * value_coin * value_pair_conv) * value_pair;
+    return result;
   }
 
   onProcessAddPricesList(coinPairList: any) {

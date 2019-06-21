@@ -35,7 +35,7 @@
   {{this.coin | json}}
 </div> -->
 
-<div class="col-md-10 p-4">
+<div class="col-md-8 p-4">
 
     <p-table [value]="dataPair"
     dataKey="name"
@@ -75,14 +75,65 @@
             {{value_exp * this.coin.values[rowData.currency] | number: '1.2-7' }}
           </td>
         </tr>
-  
+
         </ng-template>
         <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
             <tr *ngFor="let epair of rowData.values" class="border">
-              <td></td>  
-              <td> <b>{{epair.name}}</b> </td>
-              <td>{{value_exp * this.coin.values[rowData.currency] * epair.conversion | number: '1.2-7' }}</td>
-                
+              <td></td>
+              <td colspan="2">
+                <tr>
+                    <td><b>{{epair.name}}</b> -> {{value_exp * this.coin.values[rowData.currency] * epair.conversion | number: '1.2-7' }}</td>
+                    <td></td>
+                </tr>
+
+                    <!-- <tr *ngFor="let item of fnGetKeys(epair.value)">
+                        <td>{{item}}</td>
+                        <td>Valor Base: {{epair.value[item]}}</td>
+                        <td>Conversion : {{ (value_exp * this.coin.values[rowData.currency] * epair.conversion) * epair.value[item] | number: '1.2-7' }}</td>
+                    </tr> -->
+                    <tr>
+                        <table class="table table-bordered">
+                            <thead>
+                              <tr>
+                                <th scope="col"style="width: 1%;"></th>
+                                <th scope="col" style="width: 4%;"></th>
+                                <th scope="col" style="width: 4%;"></th>
+                                <th scope="col" style="width: 1%;"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let item of fnGetKeys(epair.value)">
+                                <td class="border-right-0">
+                                    <!-- <span class="pi pi-chevron-up text-primary"></span>
+                                    {{fnIsGreaterThat(fnCalculate(value_exp,this.coin.values[rowData.currency],epair.conversion,epair.value[item]), this.coin.baseValues[item] * value_exp)}} -->
+                                    <div class="ind-value"
+                                    *ngIf="fnIsGreaterThat(fnCalculate(value_exp,this.coin.values[rowData.currency],epair.conversion,epair.value[item]), this.coin.baseValues[item] * value_exp)">
+                                      <span class="pi pi-chevron-up text-primary"></span>
+                                    </div>
+                                    <div
+                                    *ngIf="!fnIsGreaterThat(fnCalculate(value_exp,this.coin.values[rowData.currency],epair.conversion,epair.value[item]), this.coin.baseValues[item] * value_exp)">
+                                      <span class="pi pi-chevron-down text-danger"></span>
+                                    </div>
+                                </td>
+                                <td class="text-right border-left-0">
+                                  <span class="mr-3">
+                                    <b>{{item}}: </b>
+                                  </span>
+                                </td>
+                                <!-- <td>{{ (value_exp * this.coin.values[rowData.currency] * epair.conversion) * epair.value[item] | number: '1.2-7' }} -->
+                                <td colspan="2">
+                                  <div class="ml-3">
+                                    {{fnCalculate(value_exp,this.coin.values[rowData.currency],epair.conversion,epair.value[item]) | number: '1.2-7' }}
+                                  </div>
+                                </td>
+
+                              </tr>
+                            </tbody>
+                          </table>
+                    </tr>
+
+            </td>
+              <!-- <td>{{value_exp * this.coin.values[rowData.currency] * epair.conversion | number: '1.2-7' }}</td> -->
             </tr>
         </ng-template>
 
