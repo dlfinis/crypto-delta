@@ -20,6 +20,7 @@ import { CoinDataComponent } from './coin-data/coin-data.component';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {TableModule} from 'primeng/table';
+import { CoinConversionComponent } from './coin-conversion/coin-conversion.component';
 
 
 
@@ -30,7 +31,8 @@ import {TableModule} from 'primeng/table';
     NavComponent,
     DashboardComponent,
     CoinListComponent,
-    CoinDataComponent
+    CoinDataComponent,
+    CoinConversionComponent
   ],
   imports: [
     BrowserModule,

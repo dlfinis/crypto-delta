@@ -46,8 +46,8 @@ export class CoinDataComponent implements OnInit {
   loading: boolean;
   totalRecords = 0;
 
-  value_exp = 0.004762;
-  percent_comp = 0.5;
+  value_exp = 107.89;
+  percent_comp = 0.25;
 
   base_coins = ['ETH', 'BCH', 'BNB', 'BTC', 'PAX', 'USDC', 'USDT', 'TUSD', 'USD'];
 

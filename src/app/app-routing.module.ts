@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CoinListComponent } from './coin-list/coin-list.component';
 import { CoinDataComponent } from './coin-data/coin-data.component';
+import { CoinConversionComponent } from './coin-conversion/coin-conversion.component';
 
 const routes: Routes = [
   {
@@ -20,6 +21,10 @@ const routes: Routes = [
   {
     path: 'list/:coin',
     component: CoinDataComponent
+  },
+  {
+    path: 'conversion/:coin',
+    component: CoinConversionComponent
   }
   // {
   //   path: 'list',
